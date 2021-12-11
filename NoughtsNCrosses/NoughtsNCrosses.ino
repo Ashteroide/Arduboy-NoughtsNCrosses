@@ -50,18 +50,23 @@ void loop()
     switch(gameState)
     {
         case GameState::Menu:
-            menuState.draw();
             menuState.update();
+            menuState.draw();
             break;
 
-        case GameState::Game:
-            gamePlayState.draw();
+        case GameState::GamePlay:
             gamePlayState.update();
+            gamePlayState.draw();
+
+            gamePlayState.drawNought();
+            gamePlayState.drawCross();
+
+            gamePlayState.drawCursor();
             break;
 
         case GameState::End:
-            endState.draw();
             endState.update();
+            endState.draw();
             break;
     }
 

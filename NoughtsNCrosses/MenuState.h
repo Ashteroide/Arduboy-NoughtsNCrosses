@@ -9,7 +9,7 @@ struct MenuState
         if(arduboy.justPressed(A_BUTTON))
         {
             if(this->menuCursor == 0)
-                GameState gameState = GameState::Game;
+                gameState = GameState::GamePlay;
             else if(this->menuCursor == 1)
             {
                 arduboy.audio.toggle();

@@ -3,6 +3,6 @@
 enum class GameState
 {
     Menu,
-    Game,
+    GamePlay,
     End
 };
