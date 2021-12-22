@@ -50,7 +50,7 @@
             "cppStandard": "c++11",
             "defines": [
                 "F_CPU=16000000L",
-                "ARDUINO=10813",
+                "ARDUINO=10818",
                 "ARDUINO_AVR_PROMICRO",
                 "ARDUINO_ARCH_AVR",
                 "ARDUBOY_10",

@@ -14,10 +14,10 @@ Screen screen;
 
 int textToMiddle(int charWidth, int x1, int x2)
 {
-    int textCentre = ( (charWidth * 6) / 2 );
-    int xCentre = ( (x2 - x1) / 2 );
+    int textCentre = ((charWidth * 6) / 2);
+    int xCentre = ((x2 - x1) / 2);
 
-    return ( (xCentre - textCentre) + x1 );
+    return ((xCentre - textCentre) + x1);
 }
 
 #include "GameState.h"
@@ -32,7 +32,6 @@ MenuState menuState;
 #include "EndState.h"
 EndState endState;
 
-
 void setup()
 {
     arduboy.begin();
@@ -42,32 +41,32 @@ void loop()
 {
     if(!arduboy.nextFrame())
         return;
-    
+
     arduboy.pollButtons();
 
     arduboy.clear();
 
     switch(gameState)
     {
-        case GameState::Menu:
-            menuState.update();
-            menuState.draw();
-            break;
+    case GameState::Menu:
+        menuState.update();
+        menuState.draw();
+        break;
 
-        case GameState::GamePlay:
-            gamePlayState.update();
-            gamePlayState.draw();
+    case GameState::GamePlay:
+        gamePlayState.update();
+        gamePlayState.draw();
 
-            gamePlayState.drawNought();
-            gamePlayState.drawCross();
+        gamePlayState.drawNought();
+        gamePlayState.drawCross();
 
-            gamePlayState.drawCursor();
-            break;
+        gamePlayState.drawCursor();
+        break;
 
-        case GameState::End:
-            endState.update();
-            endState.draw();
-            break;
+    case GameState::End:
+        endState.update();
+        endState.draw();
+        break;
     }
 
     arduboy.display();

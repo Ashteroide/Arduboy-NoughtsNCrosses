@@ -2,10 +2,10 @@
 
 struct Board
 {
-    const uint8_t gridRows = 3;
-    const uint8_t gridColumns = this->gridRows;
-    const uint8_t gridWidth = 60;
-    const uint8_t gridHeight = 60;
+    static constexpr uint8_t gridRows = 3;
+    static constexpr uint8_t gridColumns = gridRows;
+    static constexpr uint8_t gridWidth = 60;
+    static constexpr uint8_t gridHeight = 60;
     const uint8_t gridPosX = 20;
     const uint8_t gridPosY = ( (screen.height - this->gridHeight + this->gridColumns) / 2 ); // Center Grid
     const uint8_t gridPixelSetback = 1; // Moves back 1 pixel so the rectangle edges are aligned to create a perfect grid
