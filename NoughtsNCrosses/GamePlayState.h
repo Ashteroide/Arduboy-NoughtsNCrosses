@@ -5,155 +5,137 @@ Board board;
 
 struct GamePlayState
 {
-    uint8_t player1[3][3]{
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0} };
-
-    uint8_t player2[3][3]{
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0} };
+    char playerBoard[3][3] =
+    {
+        {' ', ' ', ' '},
+        {' ', ' ', ' '},
+        {' ', ' ', ' '}
+    };
 
     uint8_t cursorColumn = 0;
     uint8_t cursorRow = 0;
 
-    bool player1Turn = true;
-    bool player1Won = false;
-    bool player2Won = false;
+    struct Player
+    {
+        bool turn;
+        bool won;
+        uint8_t matches;
+    };
+
+    Player player1 = { true, false, 0 };
+    Player player2 = { false, false, 0 };
+
+    void resetMatches()
+    {
+        this->player1.matches = 0;
+        this->player2.matches = 0;
+    }
 
     bool gameDraw = false;
 
     uint8_t turns = 0;
 
-    void player1WinCheck()
+    void resetWon()
     {
-        uint8_t player1Matches = 0;
+        this->player1.won = false;
+        this->player2.won = false;
 
-        // Horizontal Rows
-        for(size_t row = 0; row < board.gridRows; ++row)
-        {
-            for(size_t column = 0; column < board.gridColumns; ++column)
-            {
-                if(player1[row][column] == 1)
-                    ++player1Matches;
-            }
+        this->player1.turn = true;
+        this->player2.turn = false;
 
-            if(player1Matches >= board.gridColumns)
-                player1Won = true;
-            else
-                player1Matches = 0;
-        }
-
-        // Vertical Columns
-        for(size_t row = 0; row < board.gridRows; ++row)
-        {
-            uint8_t player1Matches = 0;
-
-            for(size_t column = 0; column < board.gridColumns; ++column)
-            {
-                if(player1[column][row] == 1)
-                    ++player1Matches;
-            }
-
-            if(player1Matches >= board.gridColumns)
-                player1Won = true;
-            else
-                player1Matches = 0;
-        }
-
-        //Downwards Diagonally
-        for(size_t index = 0; index < 3; ++index)
-        {
-            if(this->player1[index][index] == 1)
-                ++player1Matches;
-        }
-
-        if(player1Matches >= 3)
-            this->player1Won = true;
-        else
-            player1Matches = 0;
-
-        //Upwards Diagonally
-        uint8_t rowIndex = 0;
-
-        for(int index = (board.gridColumns - 1); index > -1; --index)
-        {
-            if(this->player1[rowIndex][index] == 1)
-                ++player1Matches;
-
-            ++rowIndex;
-        }
-
-        if(player1Matches >= board.gridColumns)
-            this->player1Won = true;
-        else
-            player1Matches = 0;
+        this->gameDraw = false;
+        this->turns = 0;
     }
 
-    void player2WinCheck()
+    void resetBoard()
     {
-        uint8_t player2Matches = 0;
+        for(size_t row = 0; row < board.gridRows; ++row)
+        {
+            for(size_t column = 0; column < board.gridColumns; ++column)
+            {
+                this->playerBoard[row][column] = ' ';
+            }
+        }
 
+        this->cursorRow = 0;
+        this->cursorColumn = 0;
+    }
+
+    void playerWinCheck()
+    {
         // Horizontal Rows
         for(size_t row = 0; row < board.gridRows; ++row)
         {
             for(size_t column = 0; column < board.gridColumns; ++column)
             {
-                if(this->player2[row][column] == 1)
-                    ++player2Matches;
+                if(this->playerBoard[row][column] == 'X')
+                    ++this->player1.matches;
+                if(this->playerBoard[row][column] == 'O')
+                    ++this->player2.matches;
             }
 
-            if(player2Matches >= board.gridColumns)
-                this->player2Won = true;
-            else
-                player2Matches = 0;
+            if(player1.matches >= board.gridColumns)
+                this->player1.won = true;
+            else if(player2.matches >= board.gridColumns)
+                this->player2.won = true;
+
+            this->resetMatches();
         }
 
-        // Vertical Columns
+        // Vertical Rows
         for(size_t row = 0; row < board.gridRows; ++row)
         {
-            uint8_t player2Matches = 0;
-
             for(size_t column = 0; column < board.gridColumns; ++column)
             {
-                if(this->player2[column][row] == 1)
-                    ++player2Matches;
+                if(this->playerBoard[column][row] == 'X')
+                    ++this->player1.matches;
+                if(this->playerBoard[column][row] == 'O')
+                    ++this->player2.matches;
             }
 
-            if(player2Matches >= board.gridColumns)
-                this->player2Won = true;
-            else
-                player2Matches = 0;
+            if(player1.matches >= board.gridColumns)
+                this->player1.won = true;
+            else if(player2.matches >= board.gridColumns)
+                this->player2.won = true;
+
+            this->resetMatches();
         }
 
         //Downwards Diagonally
         for(size_t index = 0; index < 3; ++index)
         {
-            if(this->player2[index][index] == 1)
-                ++player2Matches;
+            if(this->playerBoard[index][index] == 'X')
+                ++this->player1.matches;
+            if(this->playerBoard[index][index] == 'O')
+                ++this->player2.matches;
         }
 
-        if(player2Matches >= board.gridColumns)
-            this->player2Won = true;
-        else
-            player2Matches = 0;
+        if(this->player1.matches >= board.gridColumns)
+            this->player1.won = true;
+        else if(this->player2.matches >= board.gridColumns)
+            this->player2.won = true;
+        
+            this->resetMatches();
 
         //Upwards Diagonally
         uint8_t rowIndex = 0;
 
         for(int index = (board.gridColumns - 1); index > -1; --index)
         {
-            if(this->player2[rowIndex][index] == 1)
-                ++player2Matches;
+            if(this->playerBoard[rowIndex][index] == 'X')
+                ++this->player1.matches;
+            if(this->playerBoard[rowIndex][index] == 'O')
+                ++this->player2.matches;
 
             ++rowIndex;
         }
 
-        if(player2Matches >= board.gridColumns)
-            this->player2Won = true;
-        else
-            player2Matches = 0;
+        if(this->player1.matches >= board.gridColumns)
+            this->player1.won = true;
+        else if(this->player2.matches >= board.gridColumns)
+            this->player2.won = true;
+        
+            this->resetMatches();
     }
 
     void update()
@@ -170,27 +152,34 @@ struct GamePlayState
 
         if(arduboy.justPressed(A_BUTTON))
         {
-            if(this->player1[this->cursorRow][this->cursorColumn] != 1 && this->player2[this->cursorRow][this->cursorColumn] != 1)
+            if(this->playerBoard[this->cursorRow][this->cursorColumn] != 'X' && this->playerBoard[this->cursorRow][this->cursorColumn] != 'O')
             {
-                if(!this->player1Turn)
+                if(this->player2.turn)
                 {
-                    this->player2[this->cursorRow][this->cursorColumn] = 1;
+                    this->playerBoard[this->cursorRow][this->cursorColumn] = 'O';
 
-                    this->player1Turn = !this->player1Turn;
+                    this->player2.turn = false;
+                    this->player1.turn = true;
                 }
                 else
                 {
-                    this->player1[this->cursorRow][this->cursorColumn] = 1;
+                    this->playerBoard[this->cursorRow][this->cursorColumn] = 'X';
 
-                    this->player1Turn = !this->player1Turn;
+                    this->player1.turn = false;
+                    this->player2.turn = true;
                 }
 
                 ++this->turns;
             }
         }
 
-        player1WinCheck();
-        player2WinCheck();
+        playerWinCheck();
+
+        if(this->turns >= 9)
+            this->gameDraw = true;
+
+        if(this->player1.won || this->player2.won || this->gameDraw)
+            gameState = GameState::End;
     }
 
     void draw()
@@ -198,12 +187,14 @@ struct GamePlayState
         board.drawGrid();
         board.drawInfoBox();
 
+        // Debugging!
         arduboy.setCursor(0, 0);
-        arduboy.print((this->player1Won) ? F("P1") : F("!"));
-        arduboy.print((this->player2Won) ? F("P2") : F("!"));
+        arduboy.print((this->player1.won) ? F("P1") : F("!"));
+        arduboy.print((this->player2.won) ? F("P2") : F("!"));
 
         arduboy.setCursor(0, 10);
         arduboy.print((this->gameDraw) ? F("Draw") : F("!Draw"));
+
     }
 
     uint8_t noughtPosX = (((board.gridWidth / board.gridRows) - board.gridPixelSetback));
@@ -228,7 +219,7 @@ struct GamePlayState
         {
             for(size_t columns = 0; columns < 3; ++columns)
             {
-                if(this->player2[rows][columns] == 1)
+                if(this->playerBoard[rows][columns] == 'O')
                 {
                     const uint8_t circlePosX = (this->noughtPosX * columns) + board.gridPosX + this->noughtRadius;
                     const uint8_t circlePosY = (this->noughtPosY * rows) + board.gridPosY + this->noughtRadius;
@@ -236,7 +227,7 @@ struct GamePlayState
                     arduboy.drawCircle(circlePosX, circlePosY, noughtRadius);
                 }
 
-                if(!this->player1Turn)
+                if(!this->player1.turn)
                 {
                     const uint8_t noughtsTurnPosX = (board.infoBoxPosX + (board.infoBoxWidth / 2));
                     const uint8_t noughtsTurnPosY = (board.infoBoxPosY + (board.infoBoxWidth / 2));
@@ -256,7 +247,7 @@ struct GamePlayState
         {
             for(size_t columns = 0; columns < 3; ++columns)
             {
-                if(this->player1[rows][columns] == 1)
+                if(this->playerBoard[rows][columns] == 'X')
                 {
                     const uint8_t crossPosX0 = ((this->crossWidth * columns) + board.gridPosX);
                     const uint8_t crossPosX1 = ((this->crossWidth * columns) + board.gridPosX + this->crossWidth);
@@ -268,7 +259,7 @@ struct GamePlayState
                     arduboy.drawLine(crossPosX1, crossPosY0, crossPosX0, crossPosY1);
                 }
 
-                if(this->player1Turn)
+                if(this->player1.turn)
                 {
                     const uint8_t crossesTurnPosX = (board.infoBoxPosX + (board.infoBoxWidth / 2));
                     const uint8_t crossesTurnPosY = (board.infoBoxPosY + (board.infoBoxWidth / 2));
